@@ -11,23 +11,30 @@ var config = {
 };
 
 
+
 SwaggerRestify.create(config, function(err, swaggerRestify) {
   if (err) { throw err; }
 
-  swaggerRestify.register(app);
-
   var port = process.env.PORT || 10010;
-  app.listen(port);
+
+  app.get(/\/apidoc\/.+/, restify.serveStatic({
+    directory: __dirname + '/'
+  }));
+
+  app.get(/\/swagger.yaml/, restify.serveStatic({
+    directory: __dirname + '/api/swagger'
+  }));
+
+  swaggerRestify.register(app);
 
   app.use(
       function crossOrigin(req,res,next){
         res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Credentials", "true");
         res.header("Access-Control-Allow-Headers", "X-Requested-With");
         return next();
       }
   );
 
-  if (swaggerRestify.runner.swagger.paths['/hello']) {
-    console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
-  }
+  app.listen(port);
 });

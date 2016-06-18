@@ -1,14 +1,8 @@
-# swagger configuration file
-
-# values in the swagger hash are system configuration for swagger-node
 swagger:
 
   fittingsDirs: [ api/fittings ]
   defaultPipe: null
-  swaggerControllerPipe: swagger_controllers  # defines the standard processing pipe for controllers
-
-  # values defined in the bagpipes key are the bagpipes pipes and fittings definitions
-  # (see https://github.com/apigee-127/bagpipes)
+  swaggerControllerPipe: swagger_controllers
   bagpipes:
 
     _router:
@@ -21,7 +15,6 @@ swagger:
       name: swagger_validator
       validateResponse: true
 
-    # pipe for all swagger-node controllers
     swagger_controllers:
       - onError: json_error_handler
       - cors
@@ -30,8 +23,5 @@ swagger:
       - express_compatibility
       - _router
 
-    # pipe to serve swagger (endpoint is in swagger.yaml)
     swagger_raw:
       name: swagger_raw
-
-# any other values in this file are just loaded into the config for application access...

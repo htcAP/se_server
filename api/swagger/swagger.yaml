@@ -1,52 +1,358 @@
 swagger: "2.0"
 info:
   version: "0.0.1"
-  title: Hello World App
-# during dev, should point to your local machine
+  title: Confluence Server
 host: localhost:10010
-# basePath prefixes all resource paths 
-basePath: /
-# 
+basePath: /api/
 schemes:
-  # tip: remove http to make production-grade
   - http
   - https
-# format of bodies a client can send (Content-Type)
 consumes:
   - application/json
-# format of the responses to the client (Accepts)
 produces:
   - application/json
 paths:
-  /hello:
-    # binds a127 app logic to a route
-    x-swagger-router-controller: hello_world
-    get:
-      description: Returns 'Hello' to the caller
-      # used as the method name of the controller
-      operationId: hello
+  /sessions:
+    x-swagger-router-controller: sessions
+    post:
+      description: Login and get UID (set in cookie).
+      operationId: login
       parameters:
-        - name: name
-          in: query
-          description: The name of the person to whom to say hello
-          required: false
-          type: string
+        - name: login_obj
+          in: body
+          description: Login object.
+          required: true
+          schema:
+            $ref: "#/definitions/LoginRequest"
       responses:
         "200":
           description: Success
           schema:
-            # a pointer to a definition
-            $ref: "#/definitions/HelloWorldResponse"
-        # responses may fall through to errors
+            $ref: "#/definitions/SuccessResponse"
+        "403":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /meetings:
+    x-swagger-router-controller: meetings
+    get:
+      description: Get all meetings for the current user.
+      operationId: getAllMeetings
+      parameters:
+        - name: Cookie
+          in: header
+          description: UID in cookie (leave blank, use sessions api to login beforing using this api)
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/MeetingsResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      description: Create a new meeting for the current user.
+      operationId: createMeeting
+      parameters:
+        - name: meeting_obj
+          in: body
+          description: Meeting object.
+          required: true
+          schema:
+            $ref: "#/definitions/MeetingRequest"
+        - name: Cookie
+          in: header
+          description: UID in cookie (leave blank, use sessions api to login beforing using this api)
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /meetings/{id}:
+      x-swagger-router-controller: meetings
+      get:
+        description: Get information for a specific meeting.
+        operationId: getMeeting
+        parameters:
+          - name: id
+            in: path
+            description: Id of the meeting.
+            required: true
+            type: string
+          - name: Cookie
+            in: header
+            description: UID in cookie (leave blank, use sessions api to login beforing using this api)
+            type: string
+            required: true
+        responses:
+          "200":
+            description: Success
+            schema:
+              $ref: "#/definitions/MeetingResponse"
+          default:
+            description: Error
+            schema:
+              $ref: "#/definitions/ErrorResponse"
+      delete:
+        description: Delete a specific meeting.
+        operationId: deleteMeeting
+        parameters:
+          - name: id
+            in: path
+            description: Id of the meeting.
+            required: true
+            type: string
+          - name: Cookie
+            in: header
+            description: UID in cookie (leave blank, use sessions api to login beforing using this api)
+            type: string
+            required: true
+        responses:
+          "200":
+            description: Success
+            schema:
+              $ref: "#/definitions/SuccessResponse"
+          default:
+            description: Error
+            schema:
+              $ref: "#/definitions/ErrorResponse"
+  /meetings/suggestions:
+    x-swagger-router-controller: meetings
+    get:
+      description: Get recommendations for a specific meeting.
+      operationId: getMeetingSuggestions
+      parameters:
+        - name: request_obj
+          in: body
+          description: Meeting sugestions request.
+          schema:
+            $ref: "#/definitions/MeetingSuggestionRequest"
+        - name: Cookie
+          in: header
+          description: UID in cookie (leave blank, use sessions api to login beforing using this api)
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/MeetingSuggestionsResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /users:
+    x-swagger-router-controller: users
+    get:
+      description: Get all users.
+      operationId: getAllUsers
+      parameters:
+        - name: Cookie
+          in: header
+          description: UID in cookie (leave blank, use sessions api to login beforing using this api)
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/UsersResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /rooms:
+    x-swagger-router-controller: rooms
+    get:
+      description: Get all rooms.
+      operationId: getAllRooms
+      parameters:
+        - name: Cookie
+          in: header
+          description: UID in cookie (leave blank, use sessions api to login beforing using this api)
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/RoomsResponse"
         default:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
-# complex objects have schema definitions
 definitions:
-  HelloWorldResponse:
+  LoginRequest:
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+  MeetingsResponse:
+    required:
+      - meetings
+    properties:
+      meetings:
+        type: array
+        items:
+          $ref: "#/definitions/MeetingResponse"
+  MeetingRequest:
+    required:
+      - title
+      - note
+      - start_time
+      - end_time
+      - room_id
+      - required_ids
+      - suggested_ids
+    properties:
+      title:
+        type: string
+      note:
+        type: string
+      start_time:
+        type: string
+      end_time:
+        type: string
+      room_id:
+        type: string
+      required_ids:
+        type: array
+        items:
+          type: string
+      suggested_ids:
+        type: array
+        items:
+          type: string
+  MeetingResponse:
+    required:
+      - title
+      - note
+      - start_time
+      - end_time
+      - room
+      - required_users
+      - suggested_users
+    properties:
+      title:
+        type: string
+      note:
+        type: string
+      start_time:
+        type: string
+      end_time:
+        type: string
+      room:
+        $ref: "#/definitions/RoomResponse"
+      required_users:
+        type: array
+        items:
+          $ref: "#/definitions/UserResponse"
+      suggested_users:
+        type: array
+        items:
+          $ref: "#/definitions/UserResponse"
+  RoomResponse:
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+  RoomsResponse:
+    required:
+      - rooms
+    properties:
+      rooms:
+        type: array
+        items:
+          $ref: "#/definitions/RoomResponse"
+  UsersResponse:
+    required:
+      - users
+    properties:
+      users:
+        type: array
+        items:
+          $ref: "#/definitions/UserResponse"
+  UserResponse:
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+  MeetingSuggestionsResponse:
+    required:
+      - suggestions
+    properties:
+      suggestions:
+        type: array
+        items:
+          $ref: "#/definitions/MeetingSuggestionResponse"
+  MeetingSuggestionResponse:
+    required:
+      - start_time
+      - end_time
+      - room
+      - required_users
+      - suggested_users
+    properties:
+      start_time:
+        type: string
+      end_time:
+        type: string
+      room:
+        type: string
+      required_users:
+        type: string
+      suggested_users:
+        type: string
+  MeetingSuggestionRequest:
+    required:
+      - range_start
+      - range_end
+      - room_id
+      - required_ids
+      - suggested_ids
+    properties:
+      range_start:
+        type: string
+      range_end:
+        type: string
+      room_id:
+        type: string
+      required_ids:
+        type: array
+        items:
+          type: string
+      suggested_ids:
+        type: array
+        items:
+          type: string
+  SuccessResponse:
     required:
       - message
     properties:
