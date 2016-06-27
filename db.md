@@ -15,6 +15,7 @@
 |login||
 |getByUid||
 |getByUidList||
+|getAllUsers||
 |currentUser|自动缓存登录用户的数据。 例如，判断当前用户是否为空，为空就跳转到登录页面让用户登录，如果不为空就跳转到首页|
 |logout||
 

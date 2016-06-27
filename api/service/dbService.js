@@ -84,6 +84,15 @@ var User = {
   },
   logout: function(){
     AV.User.logOut();
+  },
+  getAllUsers: function(){
+    var query = new AV.Query('_User');
+    query.exists('username');
+    return query.find().then(function(data){
+      return Promise.resolve(data);
+    },function(error){
+      return Promise.resolve(false);
+    });
   }
 
 }
