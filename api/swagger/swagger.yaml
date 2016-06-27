@@ -306,8 +306,11 @@ definitions:
         type: string
   MeetingSuggestionsResponse:
     required:
+      - conflict
       - suggestions
     properties:
+      conflict:
+        type: boolean
       suggestions:
         type: array
         items:
