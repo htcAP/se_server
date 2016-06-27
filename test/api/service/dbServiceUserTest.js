@@ -67,6 +67,17 @@ describe('User ',function(){
       })
     })
 
+    it('getAllUsers', function(){
+      return User.getAllUsers().then(function(userList){
+        if(!userList){
+          console.log("something error when getting all users");
+          return;
+        }
+        expect(userList).to.be.ok;
+        //console.log("[User] [getAllUsers]: "+JSON.stringify(userList))
+      })
+    })
+
     it('currentUser', function(){
       var user = User.currentUser();
       expect(user.get('username')).to.equal(uuser.username)
