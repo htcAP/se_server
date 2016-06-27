@@ -34,6 +34,5 @@
 |user_type|int|用户参加标准|
 
 	int USER_TYPE_REQUIRED = 1;
-	int USER_TYPE_SUGGESTED = 2;
 	int USER_TYPE_NO_IMPORTANT = 0;
 
