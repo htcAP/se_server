@@ -3,7 +3,7 @@ var Promise = require('bluebird');
 const util = require('util');
 const apiwrap = require('./apibase').apiwrap;
 var dbservice = require('../service/dbService');
-
+const Meeting = require('../models/meetings');
 module.exports = {
   getAllMeetings: apiwrap((req, res) => {
 	dbservice.Meeting.getMeetings(req.start,req.limit).then(function(data){
@@ -38,11 +38,14 @@ module.exports = {
   }),
 
   getMeetingSuggestions: apiwrap((req, res) => {
-    
-	res.json(200, {
-		hellow: 'world',
+    let meetings = new Meeting();
+    meetings.getSuggestions((suggestions)=>{
+      res.json(200, {
+        hellow: 'world'
+      });
     });
-	
+
+
   })
 
 };
