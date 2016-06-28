@@ -221,6 +221,7 @@ definitions:
       - note
       - start_time
       - end_time
+      - room_id
       - required_ids
       - suggested_ids
     properties:
@@ -231,6 +232,8 @@ definitions:
       start_time:
         type: string
       end_time:
+        type: string
+      room_id:
         type: string
       required_ids:
         type: array
@@ -332,15 +335,12 @@ definitions:
     required:
       - range_start
       - range_end
-      - room_id
       - required_ids
       - suggested_ids
     properties:
       range_start:
         type: string
       range_end:
-        type: string
-      room_id:
         type: string
       required_ids:
         type: array
