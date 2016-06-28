@@ -12,7 +12,7 @@ module.exports = {
   getAllMeetings: apiwrap((req, res) => {
 	dbservice.Meeting.getMeetings(0,1000).then(function(data){
 		res.json(200, {
-			meetings: data,
+			meetings: req.cookie,
     });
 	})
   }),
@@ -40,9 +40,16 @@ module.exports = {
 	var array = req.path.split("/");
 	var stringOfId = array[array.length-1];
     dbservice.Meeting.deleteMeeting(parseInt(stringOfId)).then(function(data){
-		res.json(200, {
-			message:'successfuly delete '+data,
-    });
+		if(data == false){
+			res.json(200, {
+			message:'meeting don'+"'"+'t exit!',
+			});
+		}
+		else{
+			res.json(200, {
+			message:'successfuly delete',
+			});
+		}
 	})
   }),
 
