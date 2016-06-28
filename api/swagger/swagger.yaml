@@ -318,8 +318,6 @@ definitions:
       - start_time
       - end_time
       - room
-      - required_users
-      - suggested_users
       - message
     properties:
       start_time:
@@ -327,15 +325,7 @@ definitions:
       end_time:
         type: string
       room:
-        type: string
-      required_users:
-        type: array
-        items:
-          $ref: "#/definitions/UserResponse"
-      suggested_users:
-        type: array
-        items:
-          $ref: "#/definitions/UserResponse"
+        $ref: "#/definitions/RoomResponse"
       message:
         type: string
   MeetingSuggestionRequest:
