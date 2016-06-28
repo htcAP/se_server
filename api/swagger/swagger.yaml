@@ -131,12 +131,13 @@ paths:
               $ref: "#/definitions/ErrorResponse"
   /meetings/suggestions:
     x-swagger-router-controller: meetings
-    get:
+    post:
       description: Get recommendations for a specific meeting.
       operationId: getMeetingSuggestions
       parameters:
         - name: request_obj
           in: body
+          required: true
           description: Meeting sugestions request.
           schema:
             $ref: "#/definitions/MeetingSuggestionRequest"
@@ -174,26 +175,26 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /rooms:
-    x-swagger-router-controller: rooms
-    get:
-      description: Get all rooms.
-      operationId: getAllRooms
-      parameters:
-        - name: Cookie
-          in: header
-          description: UID in cookie (leave blank, use sessions api to login beforing using this api)
-          type: string
-          required: true
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/RoomsResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
+#  /rooms:
+#    x-swagger-router-controller: rooms
+#    get:
+#      description: Get all rooms.
+#      operationId: getAllRooms
+#      parameters:
+#        - name: Cookie
+#          in: header
+#          description: UID in cookie (leave blank, use sessions api to login beforing using this api)
+#          type: string
+#          required: true
+#      responses:
+#        "200":
+#          description: Success
+#          schema:
+#            $ref: "#/definitions/RoomsResponse"
+#        default:
+#          description: Error
+#          schema:
+#            $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 definitions:
@@ -220,7 +221,6 @@ definitions:
       - note
       - start_time
       - end_time
-      - room_id
       - required_ids
       - suggested_ids
     properties:
@@ -231,8 +231,6 @@ definitions:
       start_time:
         type: string
       end_time:
-        type: string
-      room_id:
         type: string
       required_ids:
         type: array
@@ -322,6 +320,7 @@ definitions:
       - room
       - required_users
       - suggested_users
+      - message
     properties:
       start_time:
         type: string
@@ -330,8 +329,14 @@ definitions:
       room:
         type: string
       required_users:
-        type: string
+        type: array
+        items:
+          $ref: "#/definitions/UserResponse"
       suggested_users:
+        type: array
+        items:
+          $ref: "#/definitions/UserResponse"
+      message:
         type: string
   MeetingSuggestionRequest:
     required:
