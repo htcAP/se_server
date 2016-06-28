@@ -12,7 +12,7 @@ module.exports = {
   getAllMeetings: apiwrap((req, res) => {
 	dbservice.Meeting.getMeetings(0,1000).then(function(data){
 		res.json(200, {
-			meetings: req.cookie,
+			meetings: data,
     });
 	})
   }),
