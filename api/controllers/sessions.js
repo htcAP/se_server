@@ -1,12 +1,16 @@
 'use strict';
 
 const util = require('util');
+var dbservice = require('../service/dbService');
 
 module.exports = {
   login: (req, res) => {
-    res.header('Set-Cookie', 'UID=0; PATH=/;');
-    res.json(200, {
-      hello: 'world'
+    dbservice.User.login(req.username,req.password).then(function(data){
+        res.setHeader('Set-Cookie', ' PATH=/;',' UID = ' + data.uid);
+        res.json(200, {
+            UID: data.uid,
     });
+    })
+
   }
 };
