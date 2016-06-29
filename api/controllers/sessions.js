@@ -9,9 +9,10 @@ module.exports = {
     sessions.login(req.body.username, req.body.password).then((data)=> {
       let attrs = data.attributes;
       if (attrs) {
-        res.setHeader('Set-Cookie', ' PATH=/;', ' UID = ' + data.uid);
+        console.log(attrs.uid);
+        res.setHeader('Set-Cookie', ' PATH=/;', ' UID = ' + attrs.uid);
         res.json(200, {
-          UID: data.uid
+          uid: attrs.uid
         });
       } else {
         res.json(403, {

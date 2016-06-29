@@ -116,7 +116,7 @@ describe('Meeting', () => {
     it('deletes a meeting', ()=> {
       return new Promise((res, rej)=> {
         let meetings = new Meeting();
-        meetings.deleteMeeting(255)
+        meetings.deleteMeeting(254)
             .then((message)=> {
               res(message);
             });
