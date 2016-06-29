@@ -3,12 +3,11 @@
  */
 "use strict";
 const expect = require('chai').expect;
-const dbService = require('../../../api/service/dbService.js');
 const Meeting = require('../../../api/models/meetings')
-describe('Meeting', function () {
-  describe('GetSuggestions', function () {
+describe('Meeting', () => {
+  describe('GetSuggestions', () => {
 
-    it('has conflicts', function () {
+    it('has conflicts', () => {
       return new Promise((res, rej)=> {
         let req = {
           start_time: "2016-01-01 08:00:00",
@@ -18,17 +17,16 @@ describe('Meeting', function () {
         };
 
         let meetings = new Meeting();
-        meetings.getMeetingSuggestions(req.start_time, req.end_time, req.duration, req.required_ids).then((suggestions)=> {
-          res(suggestions);
-        });
+        meetings.getMeetingSuggestions(req.start_time, req.end_time, req.duration, req.required_ids)
+            .then((suggestions)=> {
+              res(suggestions);
+            });
       }).then((suggestions)=> {
         console.log(suggestions);
-        // expect(true).to.equal(false);
-
       })
     });
 
-    it('has no conflicts', function () {
+    it('has no conflicts', ()=> {
       return new Promise((res, rej)=> {
         let req = {
           start_time: "2015-06-28 13:20:45",
@@ -38,15 +36,81 @@ describe('Meeting', function () {
         };
 
         let meetings = new Meeting();
-        meetings.getMeetingSuggestions(req.start_time, req.end_time, req.duration, req.required_ids).then((suggestions)=> {
-          res(suggestions);
-        });
+        meetings.getMeetingSuggestions(req.start_time, req.end_time, req.duration, req.required_ids)
+            .then((suggestions)=> {
+              res(suggestions);
+            });
       }).then((suggestions)=> {
         console.log(suggestions);
-        // expect(true).to.equal(false);
-
       })
     });
 
+  });
+
+  describe('GetMeeting', ()=> {
+    it('gets an existed meeting', ()=> {
+      return new Promise((res, rej)=> {
+        let meetings = new Meeting();
+        meetings.getMeeting(239)
+            .then((meeting)=> {
+              res(meeting);
+            });
+      }).then((meeting)=> {
+        console.log(meeting.attributes);
+        expect(meeting.attributes.mid).to.equal(239);
+      })
+    });
+
+    it('gets a not existed meeting', ()=> {
+      return new Promise((res, rej)=> {
+        let meetings = new Meeting();
+        meetings.getMeeting(-1)
+            .then((meeting)=> {
+              res(meeting);
+            });
+      }).then((meeting)=> {
+        console.log(meeting);
+        expect(meeting).to.equal(false);
+      })
+    });
+  });
+
+  describe('CreateMeeting', ()=> {
+    it('creates a meeting', ()=> {
+      let req = {
+        start_time: "2013-01-01 08:00:00",
+        end_time: "2013-01-01 12:00:00",
+        title: "test_title",
+        note: "test_note",
+        room_id: 4,
+        required_ids: [1, 2, 3, 4],
+        suggested_ids: []
+      };
+      return new Promise((res, rej)=> {
+        let meetings = new Meeting();
+        meetings.createMeeting(req.title, req.note, req.start_time, req.end_time,
+            req.room_id, req.required_ids, req.suggested_ids)
+            .then((message)=> {
+              res(message);
+            });
+      }).then((message)=> {
+        console.log(message);
+        expect(typeof message).to.equal("number");
+      })
+    }).timeout(60000);
+  });
+
+  describe('DeleteMeeting', ()=> {
+    it('deletes a meeting', ()=> {
+      return new Promise((res, rej)=> {
+        let meetings = new Meeting();
+        meetings.deleteMeeting(267)
+            .then((message)=> {
+              res(message);
+            });
+      }).then((message)=> {
+        console.log(message);
+      })
+    }).timeout(60000);
   })
 });

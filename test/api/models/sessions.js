@@ -3,7 +3,6 @@
  */
 "use strict";
 const expect = require('chai').expect;
-const dbService = require('../../../api/service/dbService.js');
 const Session = require('../../../api/models/sessions');
 
 describe('Session', ()=> {

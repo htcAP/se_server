@@ -2,13 +2,14 @@
 
 const util = require('util');
 const apiwrap = require('./apibase').apiwrap;
-var dbservice = require('../service/dbService');
+const User = require('../models/users');
 
 module.exports = {
   getAllUsers: apiwrap((req, res) => {
-    dbservice.User.getAllUsers().then(function(data){
+    let users = new User();
+    users.getAllUsers().then((data)=> {
       res.json(200, {
-        users: data,
+        users: data
       });
     })
   })

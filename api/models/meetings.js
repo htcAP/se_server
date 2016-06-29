@@ -100,6 +100,52 @@ class Meeting {
 
     return availableRooms;
   }
+
+  getAllMeetings() {
+    return new Promise((res, rej)=> {
+      dbservice.Meeting.getMeetings(0, 1000).then((data)=> {
+        res(data);
+      })
+    });
+  }
+
+  getMeeting(id) {
+    return new Promise((res, rej)=> {
+      dbservice.Meeting.getMeetingByMid(parseInt(id)).then((data)=> {
+        res(data);
+      })
+    })
+  }
+
+  createMeeting(title, note, start_time, end_time, room_id, required_ids, suggested_ids) {
+    return new Promise((res, rej)=> {
+      dbservice.Meeting.createMeeting(title, note, new Date(start_time), new Date(end_time), room_id)
+          .then((data)=> {
+            let mid = data.attributes.mid;
+            let promiseList = [];
+            for (let user of suggested_ids) {
+              promiseList.push(dbservice.MeetingUser.createMeetingUser(mid, user, 0));
+            }
+            for (let user of required_ids) {
+              promiseList.push(dbservice.MeetingUser.createMeetingUser(mid, user, 1));
+            }
+            Promise.all(promiseList).then((msg)=> {
+              res(mid);
+            })
+          });
+    })
+  }
+
+  deleteMeeting(mid) {
+    return new Promise((res, rej)=> {
+      dbservice.Meeting.deleteMeeting(mid).then((fuck)=> {
+        dbservice.MeetingUser.deleteMeetingUserByMID(mid).then((fuck2)=> {
+          console.log(fuck2);
+          res(true);
+        })
+      })
+    })
+  }
 }
 
 module.exports = Meeting;
