@@ -162,16 +162,6 @@ var Meeting = {
     });
 
   },
-  getMeetingInRange: function (start_time, end_time) {
-    return AV.Query.doCloudQuery('select uid,rid from Meeting join MeetingUser ' +
-        'where Meeting.mid = MeetingUser.mid and ' +
-        '!(Meeting.createdAt < "' + start_time + '" or Meeting.createdAt > "' + end_time + '")')
-        .then(function (data) {
-          return Promise.resolve(data);
-        }, function (error) {
-          return Promise.resolve(false);
-        });
-  },
   getMeetings: function (start, limit) {
     var query = new AV.Query('Meeting');
     query.skip(start);

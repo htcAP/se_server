@@ -234,15 +234,15 @@ definitions:
       end_time:
         type: string
       room_id:
-        type: string
+        type: integer
       required_ids:
         type: array
         items:
-          type: string
+          type: integer
       suggested_ids:
         type: array
         items:
-          type: string
+          type: integer
   MeetingResponse:
     required:
       - title
@@ -277,7 +277,7 @@ definitions:
       - name
     properties:
       id:
-        type: string
+        type: integer
       name:
         type: string
   RoomsResponse:
@@ -302,7 +302,7 @@ definitions:
       - name
     properties:
       id:
-        type: string
+        type: integer
       name:
         type: string
   MeetingSuggestionsResponse:
@@ -321,7 +321,6 @@ definitions:
       - start_time
       - end_time
       - room
-      - message
     properties:
       start_time:
         type: string
@@ -329,27 +328,23 @@ definitions:
         type: string
       room:
         $ref: "#/definitions/RoomResponse"
-      message:
-        type: string
   MeetingSuggestionRequest:
     required:
       - range_start
       - range_end
+      - duration
       - required_ids
-      - suggested_ids
     properties:
       range_start:
         type: string
       range_end:
         type: string
+      duration:
+        type: integer
       required_ids:
         type: array
         items:
-          type: string
-      suggested_ids:
-        type: array
-        items:
-          type: string
+          type: integer
   SuccessResponse:
     required:
       - message

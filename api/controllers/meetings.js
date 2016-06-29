@@ -37,24 +37,27 @@ module.exports = {
   }),
 //parseInt(req.body.id)
   deleteMeeting: apiwrap((req, res) => {
-    var array = req.path.split("/");
-    var stringOfId = array[array.length - 1];
-    dbservice.Meeting.deleteMeeting(parseInt(stringOfId)).then(function (data) {
+    if (data == false) {
       res.json(200, {
-        message: 'successfuly delete ' + data,
+        message: 'meeting don' + "'" + 't exit!',
       });
-    })
+    }
+    else {
+      res.json(200, {
+        message: 'successfuly delete',
+      });
+    }
   }),
 
   getMeetingSuggestions: apiwrap((req, res) => {
-    let meetings = new Meeting();
-    meetings.getSuggestions((suggestions)=> {
-      res.json(200, {
-        hellow: 'world'
+      let meetings = new Meeting();
+      meetings.getMeetingSuggestions(req.body.range_start, req.body.range_end,
+          req.body.duration, req.body.required_ids).then((suggestions)=> {
+        res.json(200, {
+          "conflict": (suggestions.length == 5),
+          "suggestions": suggestions
+        });
       });
-    });
-
-
   })
 
 };
