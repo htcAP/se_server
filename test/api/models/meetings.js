@@ -56,8 +56,8 @@ describe('Meeting', () => {
               res(meeting);
             });
       }).then((meeting)=> {
-        console.log(meeting.attributes);
-        expect(meeting.attributes.mid).to.equal(239);
+        console.log(meeting);
+        expect(meeting.mid).to.equal(239);
       })
     });
 
@@ -71,6 +71,18 @@ describe('Meeting', () => {
       }).then((meeting)=> {
         console.log(meeting);
         expect(meeting).to.equal(false);
+      })
+    });
+
+    it('gets all meetings', ()=> {
+      return new Promise((res, rej)=> {
+        let meetings = new Meeting();
+        meetings.getAllMeetings()
+            .then((meetings)=> {
+              res(meetings);
+            });
+      }).then((meetings)=> {
+        console.log(meetings);
       })
     });
   });
@@ -97,20 +109,20 @@ describe('Meeting', () => {
         console.log(message);
         expect(typeof message).to.equal("number");
       })
-    }).timeout(60000);
+    }).timeout(20000);
   });
 
   describe('DeleteMeeting', ()=> {
     it('deletes a meeting', ()=> {
       return new Promise((res, rej)=> {
         let meetings = new Meeting();
-        meetings.deleteMeeting(267)
+        meetings.deleteMeeting(255)
             .then((message)=> {
               res(message);
             });
       }).then((message)=> {
         console.log(message);
       })
-    }).timeout(60000);
+    }).timeout(20000);
   })
 });

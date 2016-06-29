@@ -358,7 +358,6 @@ var MeetingUser = {
   },
   deleteMeetingUserByObjectId: function (id) {
     return AV.Query.doCloudQuery('delete from MeetingUser where objectId="' + id + '"').then(function (success) {
-      console.log(success);
       return Promise.resolve(true);
     }, function (error) {
       console.log("[delete mu]error " + JSON.stringify(error));
@@ -369,18 +368,16 @@ var MeetingUser = {
     var self = this;
     return this.getListByMid(mid).then(function (mu) {
       if (!mu) {
-        Promise.resolve(false);
+        return Promise.resolve(false);
       }
       var promiseList = [];
       for (var user of mu) {
         var id = user.id;
-        console.log(id);
         promiseList.push(self.deleteMeetingUserByObjectId(id));
       }
-      Promise.all(promiseList).then(function () {
-        Promise.resolve(2333);
+      return Promise.all(promiseList).then(function () {
+        return Promise.resolve(true);
       });
-      Promise.resolve(2334);
     });
   }
 };

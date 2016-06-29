@@ -102,9 +102,23 @@ class Meeting {
   }
 
   getAllMeetings() {
+    let self = this;
     return new Promise((res, rej)=> {
-      dbservice.Meeting.getMeetings(0, 1000).then((data)=> {
-        res(data);
+      dbservice.Meeting.getMeetings(0, 1000).then((allData)=> {
+        let result = [];
+        let outerPromiseList = [];
+        for (let data of allData) {
+          if (!data) {
+            res(false);
+            return;
+          }
+          outerPromiseList.push(self.getMeeting(data.attributes.mid).then((meeting)=> {
+            result.push(meeting);
+          }));
+        }
+        Promise.all(outerPromiseList).then(()=> {
+          res(result);
+        });
       })
     });
   }
@@ -112,7 +126,38 @@ class Meeting {
   getMeeting(id) {
     return new Promise((res, rej)=> {
       dbservice.Meeting.getMeetingByMid(parseInt(id)).then((data)=> {
-        res(data);
+        if (!data) {
+          res(false);
+          return;
+        }
+        dbservice.MeetingUser.getListByMid(data.attributes.mid).then((userList)=> {
+          // console.log(userList);
+          let required_users = [], suggested_users = [];
+          let promiseList = [];
+          for (let user of userList) {
+            let uid = user.attributes.uid,
+                type = user.attributes.user_type;
+            if (type == 0) {
+              promiseList.push(dbservice.User.getByUid(uid).then((user)=> {
+                suggested_users.push(user.attributes);
+              }));
+            } else {
+              promiseList.push(dbservice.User.getByUid(uid).then((user)=> {
+                required_users.push(user.attributes);
+              }));
+            }
+          }
+          Promise.all(promiseList).then(()=> {
+            data.attributes.required_users = required_users;
+            data.attributes.suggested_users = suggested_users;
+
+            dbservice.Room.getByRid(data.attributes.rid).then((room)=> {
+              data.attributes.room = room.attributes;
+              delete data.attributes.rid;
+              res(data.attributes);
+            })
+          })
+        });
       })
     })
   }
@@ -140,7 +185,6 @@ class Meeting {
     return new Promise((res, rej)=> {
       dbservice.Meeting.deleteMeeting(mid).then((fuck)=> {
         dbservice.MeetingUser.deleteMeetingUserByMID(mid).then((fuck2)=> {
-          console.log(fuck2);
           res(true);
         })
       })
