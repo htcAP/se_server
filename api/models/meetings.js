@@ -7,8 +7,8 @@ const dbservice = require('../service/dbService');
 class Meeting {
   getSuggestions(range_start, range_end, duration, required_ids) {
     let range_start_date = new Date(range_start), range_end_date = new Date(range_end);
-    this.step_size = duration * 60 * 1000;
-    let start_time = range_start_date, end_time = range_end_date + step_size;
+    this.step_size = parseInt(duration) * 60 * 1000;
+    let start_time = range_start_date, end_time = new Date(range_start_date.getTime() + this.step_size);
 
     // Search in range
     return new Promise((res, rej)=> {
@@ -24,7 +24,7 @@ class Meeting {
 
   findSolution(start_time, end_time, required_ids, suggestions, counter, limit) {
     return new Promise((res, rej)=> {
-      let resultObj = this.getConflictPairs(start_time, end_time, required_ids).then((resultObj)=> {
+      this.getConflictPairs(start_time, end_time, required_ids).then((resultObj)=> {
         if (resultObj.conflictUsers.length == 0) {
           // No user conflicts, go find available rooms
           let room = this.getOneAvailableRoom(resultObj.conflictRooms);
@@ -37,8 +37,8 @@ class Meeting {
           }
         }
         // Go search another time
-        start_time = Math.min(resultObj.latest_end_time, end_time);
-        end_time += start_time + this.step_size;
+        start_time = Math.min(new Date(resultObj.latest_end_time), end_time);
+        end_time = new Date(start_time.getTime() + this.step_size);
         counter += 1;
         if (suggestions.length < limit && counter < 10) {
           this.findSolution(start_time, end_time, required_ids, suggestions, counter);
@@ -51,7 +51,7 @@ class Meeting {
 
   getConflictPairs(start, end, required_ids) {
     return new Promise((res, rej)=> {
-      let promise = dbservice.getMeetingInRange(start, end);
+      let promise = dbservice.Meeting.getMeetingInRange(start, end);
       promise.then((result)=> {
         let conflictUserList = [], conflictRoomList, latest = null;
         res({
@@ -65,7 +65,7 @@ class Meeting {
   }
 
   getOneAvailableRoom(conflictRooms) {
-    let allRooms = dbservice.getRooms(0, 1000);
+    let allRooms = dbservice.Room.getRooms(0, 1000);
     for (let room in allRooms) {
       if (conflictRooms.indexOf(room) != -1) {
         return room;
