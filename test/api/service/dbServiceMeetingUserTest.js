@@ -15,8 +15,6 @@ describe('MeetingUser', function(){
             return MeetingUser.createMeetingUser(mu.mid, mu.uid, mu.user_type).then(
                 (result)=>{
                     mu = result;
-                    //console.log("[createMeetingUser] "+JSON.stringify(result))
-                    //console.log("[createMeetingUser] "+result.get('muid'))
                     expect(result).to.be.ok;
                 }
             )
