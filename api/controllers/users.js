@@ -2,11 +2,15 @@
 
 const util = require('util');
 const apiwrap = require('./apibase').apiwrap;
+const User = require('../models/users');
 
 module.exports = {
   getAllUsers: apiwrap((req, res) => {
-    res.json(200, {
-      hello: 'world'
-    });
+    let users = new User();
+    users.getAllUsers().then((data)=> {
+      res.json(200, {
+        users: data
+      });
+    })
   })
 };

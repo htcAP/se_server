@@ -28,6 +28,13 @@ npm install
 swagger project start
 ```
 
+运行测试：
+
+```sh
+# 数据层测试用例会修改生产环境的数据库，请谨慎操作
+swagger project test
+```
+
 ### 查看 API
 
 API 层使用 [swagger](https://github.com/swagger-api/swagger-node) 中间件构建。代码变动后 node 会执行热更新，但 api 文档本身是静态的，需要手动重启更新。
