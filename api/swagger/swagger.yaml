@@ -131,12 +131,13 @@ paths:
               $ref: "#/definitions/ErrorResponse"
   /meetings/suggestions:
     x-swagger-router-controller: meetings
-    get:
+    post:
       description: Get recommendations for a specific meeting.
       operationId: getMeetingSuggestions
       parameters:
         - name: request_obj
           in: body
+          required: true
           description: Meeting sugestions request.
           schema:
             $ref: "#/definitions/MeetingSuggestionRequest"
@@ -174,26 +175,26 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /rooms:
-    x-swagger-router-controller: rooms
-    get:
-      description: Get all rooms.
-      operationId: getAllRooms
-      parameters:
-        - name: Cookie
-          in: header
-          description: UID in cookie (leave blank, use sessions api to login beforing using this api)
-          type: string
-          required: true
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/RoomsResponse"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
+#  /rooms:
+#    x-swagger-router-controller: rooms
+#    get:
+#      description: Get all rooms.
+#      operationId: getAllRooms
+#      parameters:
+#        - name: Cookie
+#          in: header
+#          description: UID in cookie (leave blank, use sessions api to login beforing using this api)
+#          type: string
+#          required: true
+#      responses:
+#        "200":
+#          description: Success
+#          schema:
+#            $ref: "#/definitions/RoomsResponse"
+#        default:
+#          description: Error
+#          schema:
+#            $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 definitions:
@@ -233,15 +234,15 @@ definitions:
       end_time:
         type: string
       room_id:
-        type: string
+        type: integer
       required_ids:
         type: array
         items:
-          type: string
+          type: integer
       suggested_ids:
         type: array
         items:
-          type: string
+          type: integer
   MeetingResponse:
     required:
       - title
@@ -276,7 +277,7 @@ definitions:
       - name
     properties:
       id:
-        type: string
+        type: integer
       name:
         type: string
   RoomsResponse:
@@ -301,7 +302,7 @@ definitions:
       - name
     properties:
       id:
-        type: string
+        type: integer
       name:
         type: string
   MeetingSuggestionsResponse:
@@ -320,41 +321,30 @@ definitions:
       - start_time
       - end_time
       - room
-      - required_users
-      - suggested_users
     properties:
       start_time:
         type: string
       end_time:
         type: string
       room:
-        type: string
-      required_users:
-        type: string
-      suggested_users:
-        type: string
+        $ref: "#/definitions/RoomResponse"
   MeetingSuggestionRequest:
     required:
       - range_start
       - range_end
-      - room_id
+      - duration
       - required_ids
-      - suggested_ids
     properties:
       range_start:
         type: string
       range_end:
         type: string
-      room_id:
-        type: string
+      duration:
+        type: integer
       required_ids:
         type: array
         items:
-          type: string
-      suggested_ids:
-        type: array
-        items:
-          type: string
+          type: integer
   SuccessResponse:
     required:
       - message

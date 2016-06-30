@@ -62,6 +62,13 @@ describe('Meeting', function(){
             });
             return Promise.all(promiseList);
         })
+
+        it('create null meeting', function(){
+            return Meeting.createMeeting().then(function(res){
+                expect(res).to.not.be.ok;
+            })
+        })
+
     })
 
     describe('get', function(){
