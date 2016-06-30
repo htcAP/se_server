@@ -35,7 +35,7 @@ describe('Meeting', function(){
         i);
     }
     //console.log(JSON.stringify(meetings))
-
+    var uMeetings = [];
     describe('create', function(){
         it('createMeeting', function(){
             //var result = Promise.resolve(true);
@@ -55,6 +55,8 @@ describe('Meeting', function(){
                 promiseList.push(Meeting.createMeeting(meeting.title, meeting.note, meeting.start_time,
                             meeting.end_time, meeting.rid).then(function(res){
                                 //console.log("[createMeeting] "+res.get('title'));
+                            uMeetings.push(res);
+                            //console.log("[createMeeting] "+JSON.stringify(res));
                             expect(res).to.be.ok;
                     }));
             });
@@ -68,12 +70,13 @@ describe('Meeting', function(){
         })
 
     })
-    var uMeetings;
+
     describe('get', function(){
 
         it('getMeetings', function(){
             return Meeting.getMeetings(0, meetings.length).then(function(data){
-                uMeetings = data;
+                //console.log("[getMeetings] data: "+JSON.stringify(data))
+                //uMeetings = data;
                 //data.forEach(function(meeting){
                 //    meetings.forEach(function(item){
                 //        if(item.rid==meeting.get('rid')){

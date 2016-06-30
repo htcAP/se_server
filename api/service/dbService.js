@@ -145,27 +145,32 @@ var Meeting = {
   },
   updateMeeting: function (meetings) {
     //mid, title, note, start_time, end_time, rid
-    return this.getMeetingByMid(meetings.mid).then(function (meeting) {
-      if (!meeting) {
+    //console.log("[updateMeeting] meetings: "+JSON.stringify(meetings))
+    return this.getMeetingByMid(meetings.mid).then(function(meeting){
+      if(!meeting){
         return Promise.resolve(false);
       }
       var meetingFolder = AV.Object.createWithoutData('Meeting', meeting.get('objectId'));
-      meetingFolder.set('title', meetings.title);
-      meetingFolder.set('note', meetings.note);
+      //var meetingFolder = AV.Object.createWithoutData('Meeting', meeting.objectId);
+      meetingFolder.set('title',meetings.title);
+      meetingFolder.set('note',meetings.note);
       meetingFolder.set('start_time', meetings.start_time);
       meetingFolder.set('end_time', meetings.end_time);
       meetingFolder.set('rid', meetings.rid);
       return meetingFolder.save().then(
-          ()=>Promise.resolve(true)
-          , ()=>Promise.resolve(false)
+         ()=>Promise.resolve(true)
+        ,(error)=>{
+           console.log("[updateMeeting ]error: "+JSON.stringify(error));
+           return Promise.resolve(false)
+          }
       );
     });
 
   },
   getMeetings: function (start, limit) {
     var query = new AV.Query('Meeting');
-    query.skip(start);
     query.limit(limit);
+    query.skip(start);
     return query.find();
   },
   getMeetingsByTime: function (start_time, end_time) {
